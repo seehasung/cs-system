@@ -22,6 +22,5 @@ app.include_router(auth.router)
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
-    username = request.cookies.get("username")  # 쿠키에서 사용자 이름 가져오기
+    username = request.session.get("user")  # ✅ 세션에서 로그인한 사용자 이름 가져오기
     return templates.TemplateResponse("index.html", {"request": request, "username": username})
-
