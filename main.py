@@ -14,3 +14,4 @@ Base.metadata.create_all(bind=engine)
 
 # 라우터 등록
 app.include_router(auth.router)
+
