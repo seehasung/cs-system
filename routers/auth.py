@@ -41,3 +41,8 @@ def register_user(
     db.close()
 
     return RedirectResponse("/login", status_code=302)
+
+# 로그인 페이지 보여주기
+@router.get("/login", response_class=HTMLResponse)
+def show_login_form(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
