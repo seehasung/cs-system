@@ -5,6 +5,8 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware  # ✅ 추가
 from routers import auth
 from database import Base, engine
+from routers import admin
+
 
 app = FastAPI()
 
@@ -19,6 +21,8 @@ Base.metadata.create_all(bind=engine)
 
 # 라우터 등록
 app.include_router(auth.router)
+app.include_router(admin.router)
+
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):

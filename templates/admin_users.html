@@ -1,0 +1,45 @@
+<!-- templates/admin_users.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>사용자 관리</title>
+</head>
+<body>
+    <h2>사용자 관리 페이지</h2>
+    <table border="1">
+        <tr><th>ID</th><th>이름</th><th>관리자</th><th>수정</th><th>삭제</th></tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>
+                <form method="post" action="/admin/users/update">
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    <input type="text" name="new_username" value="{{ user.username }}">
+                    <button type="submit">변경</button>
+                </form>
+            </td>
+            <td>
+                {% if user.username != 'admin' %}
+                <form method="post" action="/admin/users/toggle-admin">
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    <button type="submit">{{ '✅' if user.is_admin else '❌' }}</button>
+                </form>
+                {% else %}
+                ✅
+                {% endif %}
+            </td>
+            <td>
+                {% if user.username != 'admin' %}
+                <form method="post" action="/admin/users/delete">
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    <button type="submit">삭제</button>
+                </form>
+                {% else %}
+                -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
