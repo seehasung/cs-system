@@ -6,6 +6,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from passlib.hash import bcrypt
 
+
 from database import SessionLocal, User
 
 router = APIRouter()
@@ -64,4 +65,11 @@ def login_user(
         })
 
     response = RedirectResponse(url="/", status_code=302)
+    response.set_cookie(key="username", value=username)  # ✅ 로그인 성공 시 쿠키 설정
     return response
+
+
+@router.get("/logout")
+def logout(request: Request):
+    request.session.clear()  # ✅ 세션 삭제
+    return RedirectResponse(url="/login", status_code=302)
