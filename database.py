@@ -31,7 +31,7 @@ def create_super_admin():
         )
         db.add(super_admin)
         db.commit()
-        print("✅ 최초 관리자 계정이 생성되었습니다. (admin / admin1234)")
+        print("✅ 최초 관리자 계정이 생성되었습니다. (shsboss274 / shsboss274)")
     db.close()
 
 # DB 테이블 생성 및 최초 관리자 등록
