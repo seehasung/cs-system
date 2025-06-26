@@ -3,8 +3,7 @@ services:
     name: cs-system
     runtime: python
     buildCommand: ""
-    startCommand: uvicorn main:app --host=0.0.0.0 --port=$PORT
-    envVars:
-      - key: PORT
-        value: 10000
+    startCommand: ./start.sh
     plan: free
+    branch: main
+    autoDeploy: true
