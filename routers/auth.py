@@ -46,3 +46,22 @@ def register_user(
 @router.get("/login", response_class=HTMLResponse)
 def show_login_form(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+
+# 로그인 처리
+@router.post("/login")
+def login_user(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...)
+):
+    db: Session = SessionLocal()
+    user = db.query(User).filter(User.username == username).first()
+
+    if not user or not bcrypt.verify(password, user.password):
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error": "아이디 또는 비밀번호가 잘못되었습니다."
+        })
+
+    response = RedirectResponse(url="/", status_code=302)
+    return response
