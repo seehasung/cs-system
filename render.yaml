@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: cs-system
+    runtime: python
+    buildCommand: ""
+    startCommand: uvicorn main:app --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: PORT
+        value: 10000
+    plan: free
