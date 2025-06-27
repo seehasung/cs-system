@@ -64,11 +64,16 @@ def login_user(
             "error": "아이디 또는 비밀번호가 잘못되었습니다."
         })
 
-    # ✅ 세션에 사용자 이름 저장
-    request.session["user"] = username
-
-    return RedirectResponse(url="/", status_code=302)
-
+    # ✅ 로그인 성공 시 쿠키 저장 (HTTPS 호환용)
+    response = RedirectResponse(url="/", status_code=302)
+    response.set_cookie(
+        key="username",
+        value=username,
+        httponly=True,
+        secure=True,   # HTTPS 필수
+        samesite="lax"
+    )
+    return response
 
 @router.get("/logout")
 def logout(request: Request):
