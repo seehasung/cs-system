@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from database import Base, engine, SessionLocal, User
+from routers import auth  # ✅ auth 라우터 포함
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="서하성")
@@ -11,6 +12,9 @@ app.add_middleware(SessionMiddleware, secret_key="서하성")
 templates = Jinja2Templates(directory="templates")
 
 Base.metadata.create_all(bind=engine)
+
+# ✅ auth 라우터 등록
+app.include_router(auth.router)
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
