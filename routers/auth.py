@@ -45,7 +45,6 @@ def register_user(
 def show_login_form(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
-# 로그인 처리
 @router.post("/login")
 def login_user(
     request: Request,
@@ -61,19 +60,11 @@ def login_user(
             "error": "아이디 또는 비밀번호가 잘못되었습니다."
         })
 
-    # ✅ 로그인 성공 시 쿠키에 사용자 이름 저장 (HTTPS 대응 포함)
-    response = RedirectResponse(url="/", status_code=302)
-    response.set_cookie(
-        key="username",
-        value=username,
-        httponly=True,
-        secure=True,
-        samesite="lax"
-    )
-    return response
+    # ✅ 세션 방식으로 사용자 로그인
+    request.session["user"] = username
+    return RedirectResponse(url="/", status_code=302)
 
 @router.get("/logout")
 def logout(request: Request):
-    response = RedirectResponse(url="/login", status_code=302)
-    response.delete_cookie("username")
-    return response
+    request.session.clear()  # 세션 삭제
+    return RedirectResponse(url="/login", status_code=302)

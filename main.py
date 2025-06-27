@@ -18,7 +18,7 @@ app.include_router(auth.router)
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
-    username = request.cookies.get("username")
+    username = request.session.get("user")  # ✅ 세션에서 사용자명 가져오기
     is_admin = False
     if username:
         db = SessionLocal()
