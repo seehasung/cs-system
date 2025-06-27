@@ -1,0 +1,16 @@
+<!-- templates/view_logs.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>로그 보기</title>
+</head>
+<body>
+    <h2>로그 기록 (관리자 전용)</h2>
+    <a href="/">← 홈으로 돌아가기</a>
+    <pre>
+{% for line in logs %}
+{{ line }}
+{% endfor %}
+    </pre>
+</body>
+</html>
