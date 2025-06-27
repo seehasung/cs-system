@@ -1,75 +1,73 @@
-# routers/admin.py
-
-from fastapi import APIRouter, Request, Form, Depends
-from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi import APIRouter, Request, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from passlib.hash import bcrypt
+
 from database import SessionLocal, User
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# 회원가입 페이지 보여주기
+@router.get("/register", response_class=HTMLResponse)
+def show_register_form(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
 
-# 관리자 확인
-def is_admin_user(request: Request):
-    username = request.cookies.get("username")
-    db = SessionLocal()
-    user = db.query(User).filter(User.username == username).first()
-    db.close()
-    return user and user.is_admin
-
-# 사용자 목록 보기
-@router.get("/admin/users", response_class=HTMLResponse)
-def manage_users(request: Request, db: Session = Depends(get_db)):
-    if not is_admin_user(request):
-        return RedirectResponse(url="/", status_code=302)
-
-    users = db.query(User).all()
-    return templates.TemplateResponse("admin_users.html", {"request": request, "users": users})
-
-# 사용자 삭제
-@router.post("/admin/users/delete")
-def delete_user(user_id: int = Form(...), request: Request = None, db: Session = Depends(get_db)):
-    if not is_admin_user(request):
-        return RedirectResponse(url="/", status_code=302)
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if user and user.username != "admin":
-        db.delete(user)
-        db.commit()
-    return RedirectResponse("/admin/users", status_code=302)
-
-# 권한 토글
-@router.post("/admin/users/toggle-admin")
-def toggle_admin(user_id: int = Form(...), request: Request = None, db: Session = Depends(get_db)):
-    if not is_admin_user(request):
-        return RedirectResponse(url="/", status_code=302)
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if user and user.username != "admin":
-        user.is_admin = not user.is_admin
-        db.commit()
-    return RedirectResponse("/admin/users", status_code=302)
-
-# 사용자 정보 변경
-@router.post("/admin/users/update")
-def update_user(
-    user_id: int = Form(...),
-    new_username: str = Form(...),
-    request: Request = None,
-    db: Session = Depends(get_db)
+# 회원가입 처리
+@router.post("/register")
+def register_user(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...)
 ):
-    if not is_admin_user(request):
-        return RedirectResponse(url="/", status_code=302)
+    db: Session = SessionLocal()
 
-    user = db.query(User).filter(User.id == user_id).first()
-    if user and user.username != "admin":
-        user.username = new_username
-        db.commit()
-    return RedirectResponse("/admin/users", status_code=302)
+    # 이미 존재하는 유저 확인
+    existing_user = db.query(User).filter(User.username == username).first()
+    if existing_user:
+        return templates.TemplateResponse("register.html", {
+            "request": request,
+            "error": "이미 존재하는 사용자입니다."
+        })
+
+    # 비밀번호 해시 후 저장
+    hashed_pw = bcrypt.hash(password)
+    new_user = User(username=username, password=hashed_pw)
+    db.add(new_user)
+    db.commit()
+    db.close()
+
+    return RedirectResponse("/login", status_code=302)
+
+# 로그인 페이지 보여주기
+@router.get("/login", response_class=HTMLResponse)
+def show_login_form(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+# 로그인 처리
+@router.post("/login")
+def login_user(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...)
+):
+    db: Session = SessionLocal()
+    user = db.query(User).filter(User.username == username).first()
+
+    if not user or not bcrypt.verify(password, user.password):
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error": "아이디 또는 비밀번호가 잘못되었습니다."
+        })
+
+    # ✅ 로그인 성공 시 쿠키에 사용자 이름 저장
+    response = RedirectResponse(url="/", status_code=302)
+    response.set_cookie(key="username", value=username)
+    return response
+
+@router.get("/logout")
+def logout(request: Request):
+    response = RedirectResponse(url="/login", status_code=302)
+    response.delete_cookie("username")
+    return response
