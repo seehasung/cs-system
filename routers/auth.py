@@ -1,11 +1,8 @@
-# routers/auth.py
-
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from passlib.hash import bcrypt
-
 
 from database import SessionLocal, User
 
@@ -64,18 +61,19 @@ def login_user(
             "error": "아이디 또는 비밀번호가 잘못되었습니다."
         })
 
-    # ✅ 로그인 성공 시 쿠키 저장 (HTTPS 호환용)
+    # ✅ 로그인 성공 시 쿠키에 사용자 이름 저장 (HTTPS 대응 포함)
     response = RedirectResponse(url="/", status_code=302)
     response.set_cookie(
         key="username",
         value=username,
         httponly=True,
-        secure=True,   # HTTPS 필수
+        secure=True,
         samesite="lax"
     )
     return response
 
 @router.get("/logout")
 def logout(request: Request):
-    request.session.clear()  # ✅ 세션 삭제
-    return RedirectResponse(url="/login", status_code=302)
+    response = RedirectResponse(url="/login", status_code=302)
+    response.delete_cookie("username")
+    return response
