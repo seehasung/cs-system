@@ -2,29 +2,29 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from starlette.middleware.sessions import SessionMiddleware  # ✅ 추가
-from routers import auth
-from database import Base, engine
-from routers import admin
-
+from starlette.middleware.sessions import SessionMiddleware
+from database import Base, engine, SessionLocal, User
 
 app = FastAPI()
-
-# ✅ 세션 미들웨어 추가 (비밀 키는 적절히 보안 필요)
 app.add_middleware(SessionMiddleware, secret_key="서하성")
 
-# 템플릿 경로
 templates = Jinja2Templates(directory="templates")
 
-# DB 생성
 Base.metadata.create_all(bind=engine)
-
-# 라우터 등록
-app.include_router(auth.router)
-app.include_router(admin.router)
-
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
-    username = request.session.get("user")  # ✅ 세션에서 로그인한 사용자 이름 가져오기
-    return templates.TemplateResponse("index.html", {"request": request, "username": username})
+    username = request.cookies.get("username")
+    is_admin = False
+    if username:
+        db = SessionLocal()
+        user = db.query(User).filter(User.username == username).first()
+        db.close()
+        if user:
+            is_admin = user.is_admin
+
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "username": username,
+        "is_admin": is_admin
+    })

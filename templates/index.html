@@ -1,11 +1,13 @@
-# templates/index.html
 {% extends "base.html" %}
 {% block title %}홈{% endblock %}
 {% block content %}
   <h1>CS 시스템에 오신 것을 환영합니다.</h1>
+
   {% if username %}
     <p>👋 {{ username }}님 환영합니다! <a href="/logout">로그아웃</a></p>
-    {% if username == 'admin' %}
+    <p><strong>is_admin 값:</strong> {{ is_admin }}</p>  {# ✅ 임시 출력용 #}
+
+    {% if is_admin %}
       <p><a class="btn btn-primary" href="/admin">사용자 관리</a></p>
     {% endif %}
   {% else %}
