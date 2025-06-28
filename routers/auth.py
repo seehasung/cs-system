@@ -8,7 +8,7 @@ import os
 
 from database import SessionLocal, User
 
-router = APIRouter(prefix="/admin")  # ✅ admin 경로 prefix 유지
+router = APIRouter()  # ✅ prefix 제거하여 /login, /logout, /change-password 등 작동하게 함
 templates = Jinja2Templates(directory="templates")
 
 # ✅ 로그 기록 함수
@@ -96,7 +96,7 @@ def change_password(request: Request, current_password: str = Form(...), new_pas
     return RedirectResponse("/", status_code=302)
 
 # 관리자 전용 로그 보기 페이지
-@router.get("/logs", response_class=HTMLResponse)
+@router.get("/admin/logs", response_class=HTMLResponse)
 def view_logs(request: Request):
     username = request.session.get("user")
     if not username:
