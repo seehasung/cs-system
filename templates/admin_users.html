@@ -7,6 +7,7 @@
 <body>
     <h2>사용자 관리 페이지</h2>
     <p><a href="/" class="btn btn-secondary">← 홈으로 돌아가기</a></p>
+    <p><a href="/admin/logs">📜 로그 보기 (관리자 전용)</a></p>
     <table border="1">
         <tr><th>ID</th><th>이름</th><th>관리자</th><th>수정</th><th>삭제</th></tr>
         {% for user in users %}
@@ -17,7 +18,7 @@
                     <input type="hidden" name="user_id" value="{{ user.id }}">
                     <input type="text" name="new_username" value="{{ user.username }}">
                     <button type="submit">변경</button>
-                </form>
+                </form>s
             </td>
             <td>
                 {% if user.username != 'admin' %}
