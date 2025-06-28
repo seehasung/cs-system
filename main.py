@@ -3,23 +3,21 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from database import Base, engine, SessionLocal, User
-from routers import admin  # auth는 admin에 통합되었으므로 auth import 제거
+from routers import auth, admin
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="서하성")
-
 templates = Jinja2Templates(directory="templates")
 
-# 데이터베이스 테이블 생성
 Base.metadata.create_all(bind=engine)
 
-# ✅ admin 라우터 등록 (prefix 포함)
+# 라우터 등록
+app.include_router(auth.router)
 app.include_router(admin.router, prefix="/admin")
 
-# 메인 페이지
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
-    username = request.session.get("user")  # 세션에서 사용자명 가져오기
+    username = request.session.get("user")
     is_admin = False
     if username:
         db = SessionLocal()

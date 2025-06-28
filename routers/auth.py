@@ -39,7 +39,7 @@ def register_user(request: Request, username: str = Form(...), password: str = F
     db.commit()
     db.close()
     log_event(f"✅ 회원가입: {username}")
-    return RedirectResponse("/login", status_code=302)
+    return RedirectResponse("/admin/login", status_code=302)
 
 # 로그인 페이지
 @router.get("/login", response_class=HTMLResponse)
@@ -67,7 +67,7 @@ def login_user(request: Request, username: str = Form(...), password: str = Form
 def logout(request: Request):
     username = request.session.get("user")
     request.session.clear()
-    response = RedirectResponse("/login", status_code=302)
+    response = RedirectResponse("/admin/login", status_code=302)
     if username:
         log_event(f"🔓 로그아웃: {username}")
     return response
@@ -77,7 +77,7 @@ def logout(request: Request):
 def show_change_password_form(request: Request):
     username = request.session.get("user")
     if not username:
-        return RedirectResponse("/login", status_code=302)
+        return RedirectResponse("/admin/login", status_code=302)
     return templates.TemplateResponse("change_password.html", {"request": request})
 
 # 비밀번호 변경 처리
@@ -85,7 +85,7 @@ def show_change_password_form(request: Request):
 def change_password(request: Request, current_password: str = Form(...), new_password: str = Form(...)):
     username = request.session.get("user")
     if not username:
-        return RedirectResponse("/login", status_code=302)
+        return RedirectResponse("/admin/login", status_code=302)
     db: Session = SessionLocal()
     user = db.query(User).filter(User.username == username).first()
     if not user or not bcrypt.verify(current_password, user.password):
@@ -104,7 +104,7 @@ def change_password(request: Request, current_password: str = Form(...), new_pas
 def view_logs(request: Request):
     username = request.session.get("user")
     if not username:
-        return RedirectResponse("/login", status_code=302)
+        return RedirectResponse("/admin/login", status_code=302)
     db: Session = SessionLocal()
     user = db.query(User).filter(User.username == username).first()
     db.close()
