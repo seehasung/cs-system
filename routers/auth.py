@@ -8,7 +8,7 @@ import os
 
 from database import SessionLocal, User
 
-router = APIRouter()
+router = APIRouter(prefix="/admin")  # ✅ admin 경로 prefix 유지
 templates = Jinja2Templates(directory="templates")
 
 # ✅ 로그 기록 함수
@@ -39,7 +39,7 @@ def register_user(request: Request, username: str = Form(...), password: str = F
     db.commit()
     db.close()
     log_event(f"✅ 회원가입: {username}")
-    return RedirectResponse("/admin/login", status_code=302)
+    return RedirectResponse("/login", status_code=302)
 
 # 로그인 페이지
 @router.get("/login", response_class=HTMLResponse)
@@ -56,24 +56,24 @@ def login_user(request: Request, username: str = Form(...), password: str = Form
             "request": request,
             "error": "아이디 또는 비밀번호가 잘못되었습니다."
         })
-    request.session["user"] = username
+    request.session["user"] = username  # 세션 저장
     log_event(f"✅ 로그인: {username}")
     return RedirectResponse("/", status_code=302)
 
-# 로그아웃
+# 로그아웃 처리
 @router.get("/logout")
 def logout(request: Request):
     username = request.session.get("user")
     request.session.clear()
     log_event(f"🔓 로그아웃: {username}")
-    return RedirectResponse("/admin/login", status_code=302)
+    return RedirectResponse("/login", status_code=302)
 
-# 비밀번호 변경 폼
+# 비밀번호 변경 페이지
 @router.get("/change-password", response_class=HTMLResponse)
 def show_change_password_form(request: Request):
     username = request.session.get("user")
     if not username:
-        return RedirectResponse("/admin/login", status_code=302)
+        return RedirectResponse("/login", status_code=302)
     return templates.TemplateResponse("change_password.html", {"request": request})
 
 # 비밀번호 변경 처리
@@ -81,7 +81,7 @@ def show_change_password_form(request: Request):
 def change_password(request: Request, current_password: str = Form(...), new_password: str = Form(...)):
     username = request.session.get("user")
     if not username:
-        return RedirectResponse("/admin/login", status_code=302)
+        return RedirectResponse("/login", status_code=302)
     db: Session = SessionLocal()
     user = db.query(User).filter(User.username == username).first()
     if not user or not bcrypt.verify(current_password, user.password):
@@ -94,3 +94,26 @@ def change_password(request: Request, current_password: str = Form(...), new_pas
     db.close()
     log_event(f"🔑 비밀번호 변경: {username}")
     return RedirectResponse("/", status_code=302)
+
+# 관리자 전용 로그 보기 페이지
+@router.get("/logs", response_class=HTMLResponse)
+def view_logs(request: Request):
+    username = request.session.get("user")
+    if not username:
+        return RedirectResponse("/login", status_code=302)
+    db: Session = SessionLocal()
+    user = db.query(User).filter(User.username == username).first()
+    db.close()
+    if not user or not user.is_admin:
+        return RedirectResponse("/", status_code=302)
+    log_file = "logs/user_events.log"
+    if os.path.exists(log_file):
+        with open(log_file, "r", encoding="utf-8") as f:
+            logs = f.readlines()
+    else:
+        logs = ["로그 파일이 없습니다. 로그인 또는 로그아웃 시 생성됩니다."]
+    return templates.TemplateResponse("view_logs.html", {
+        "request": request,
+        "logs": logs,
+        "username": username
+    })
