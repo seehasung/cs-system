@@ -100,7 +100,7 @@ def change_password(request: Request, current_password: str = Form(...), new_pas
     return RedirectResponse("/", status_code=302)
 
 # 관리자 전용 로그 보기 페이지
-@router.get("/logs", response_class=HTMLResponse)
+@router.get("/admin/logs", response_class=HTMLResponse)
 def view_logs(request: Request):
     username = request.session.get("user")
     if not username:

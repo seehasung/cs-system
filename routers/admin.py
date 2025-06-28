@@ -8,7 +8,7 @@ router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 # ✅ 관리자 페이지
-@router.get("/admin", response_class=HTMLResponse)
+@router.get("/admin/logs", response_class=HTMLResponse)
 def admin_page(request: Request):
     username = request.session.get("user")  # ✅ 세션으로 사용자 확인
     if not username:
