@@ -8,9 +8,9 @@ from database import SessionLocal, User
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# ✅ 사용자 목록 보기
+# ✅ 사용자 목록 보기 (검색 포함)
 @router.get("/users", response_class=HTMLResponse)
-def admin_users(request: Request):
+def admin_users(request: Request, search: str = ""):
     username = request.session.get("user")
     if not username:
         return RedirectResponse("/login", status_code=302)
@@ -21,12 +21,16 @@ def admin_users(request: Request):
         db.close()
         return RedirectResponse("/", status_code=302)
 
-    users = db.query(User).all()
+    if search:
+        users = db.query(User).filter(User.username.contains(search)).all()
+    else:
+        users = db.query(User).all()
     db.close()
     return templates.TemplateResponse("admin_users.html", {
         "request": request,
         "users": users,
-        "username": username
+        "username": username,
+        "search": search
     })
 
 # ✅ 사용자 이름 수정

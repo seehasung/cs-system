@@ -3,6 +3,11 @@
 <html>
 <head>
     <title>사용자 관리</title>
+    <script>
+        function confirmDelete() {
+            return confirm("정말 삭제하시겠습니까?");
+        }
+    </script>
 </head>
 <body>
     <h2>사용자 관리 페이지</h2>
@@ -12,6 +17,12 @@
         <a href="/" class="btn btn-secondary">← 홈으로 돌아가기</a>
         <a href="/admin/logs" class="btn btn-secondary">📜 로그 보기 (관리자 전용)</a>
     </p>
+
+    <!-- 검색 폼 -->
+    <form method="get" action="/admin/users">
+        <input type="text" name="search" placeholder="사용자 이름 검색" value="{{ search }}">
+        <button type="submit">🔍 검색</button>
+    </form>
 
     <table border="1">
         <tr><th>ID</th><th>이름</th><th>관리자</th><th>수정</th><th>삭제</th></tr>
@@ -37,7 +48,7 @@
             </td>
             <td>
                 {% if user.username != 'shsboss274' %}
-                <form method="post" action="/admin/users/delete">
+                <form method="post" action="/admin/users/delete" onsubmit="return confirmDelete();">
                     <input type="hidden" name="user_id" value="{{ user.id }}">
                     <button type="submit">삭제</button>
                 </form>
