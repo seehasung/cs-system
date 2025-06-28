@@ -26,7 +26,7 @@ def admin_users(request: Request, search: str = ""):
     else:
         users = db.query(User).all()
     db.close()
-    return templates.TemplateResponse("admin_users.html", {
+    return templates.TemplateResponse("admin_users_bootstrap.html", {
         "request": request,
         "users": users,
         "username": username,
