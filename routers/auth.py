@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -8,7 +8,7 @@ import os
 
 from database import SessionLocal, User
 
-router = APIRouter()  # ✅ prefix 제거하여 /login, /logout, /change-password 등 작동하게 함
+router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 # ✅ 로그 기록 함수
@@ -56,7 +56,7 @@ def login_user(request: Request, username: str = Form(...), password: str = Form
             "request": request,
             "error": "아이디 또는 비밀번호가 잘못되었습니다."
         })
-    request.session["user"] = username  # 세션 저장
+    request.session["user"] = username
     log_event(f"✅ 로그인: {username}")
     return RedirectResponse("/", status_code=302)
 
@@ -96,7 +96,7 @@ def change_password(request: Request, current_password: str = Form(...), new_pas
     return RedirectResponse("/", status_code=302)
 
 # 관리자 전용 로그 보기 페이지
-@router.get("/admin/logs", response_class=HTMLResponse)
+@router.get("/logs", response_class=HTMLResponse)
 def view_logs(request: Request):
     username = request.session.get("user")
     if not username:
