@@ -11,10 +11,10 @@
       row.className = "row mb-2";
       row.innerHTML = `
         <div class="col">
-          <input type="text" name="${nameInputName}" class="form-control" placeholder="옵션명" required>
+          <input type="text" name="${nameInputName}[]" class="form-control" placeholder="옵션명" required>
         </div>
         <div class="col">
-          <input type="number" name="${priceInputName}" class="form-control" placeholder="가격" required>
+          <input type="number" name="${priceInputName}[]" class="form-control" placeholder="가격" required>
         </div>
         <div class="col-auto">
           <button type="button" class="btn btn-danger" onclick="this.closest('.row').remove()">삭제</button>
@@ -41,14 +41,14 @@
     <div class="mb-3">
       <label class="form-label">쿠팡 옵션</label>
       <div id="coupang-options">
-        {% if product and product.coupang_options %}
-          {% for opt in product.coupang_options | from_json %}
+        {% if coupang_options %}
+          {% for opt in coupang_options %}
           <div class="row mb-2">
             <div class="col">
-              <input type="text" name="coupang_option_names" class="form-control" value="{{ opt.name }}" required>
+              <input type="text" name="coupang_option_names[]" class="form-control" value="{{ opt.name }}" required>
             </div>
             <div class="col">
-              <input type="number" name="coupang_option_prices" class="form-control" value="{{ opt.price }}" required>
+              <input type="number" name="coupang_option_prices[]" class="form-control" value="{{ opt.price }}" required>
             </div>
             <div class="col-auto">
               <button type="button" class="btn btn-danger" onclick="this.closest('.row').remove()">삭제</button>
@@ -63,14 +63,14 @@
     <div class="mb-3">
       <label class="form-label">타오바오 옵션</label>
       <div id="taobao-options">
-        {% if product and product.taobao_options %}
-          {% for opt in product.taobao_options | from_json %}
+        {% if taobao_options %}
+          {% for opt in taobao_options %}
           <div class="row mb-2">
             <div class="col">
-              <input type="text" name="taobao_option_names" class="form-control" value="{{ opt.name }}" required>
+              <input type="text" name="taobao_option_names[]" class="form-control" value="{{ opt.name }}" required>
             </div>
             <div class="col">
-              <input type="number" name="taobao_option_prices" class="form-control" value="{{ opt.price }}" required>
+              <input type="number" name="taobao_option_prices[]" class="form-control" value="{{ opt.price }}" required>
             </div>
             <div class="col-auto">
               <button type="button" class="btn btn-danger" onclick="this.closest('.row').remove()">삭제</button>

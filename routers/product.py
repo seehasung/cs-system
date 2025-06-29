@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 import json
 
 from database import SessionLocal, User, Product
@@ -65,7 +65,7 @@ def delete_user(user_id: int = Form(...)):
     db.close()
     return RedirectResponse("/admin/users", status_code=302)
 
-# ✅ 상품 목록 보기 (검색 포함)
+# ✅ 상품 목록 보기
 @router.get("/products", response_class=HTMLResponse)
 def product_list(request: Request, keyword: str = ""):
     db = SessionLocal()
@@ -105,16 +105,17 @@ def product_create_form(request: Request):
 # ✅ 상품 등록 처리
 @router.post("/products/create")
 def product_create(
+    request: Request,
     name: str = Form(...),
     price: int = Form(...),
-    coupang_link: str = Form(...),
-    taobao_link: str = Form(...),
-    coupang_option_names: List[str] = Form(...),
-    coupang_option_prices: List[int] = Form(...),
-    taobao_option_names: List[str] = Form(...),
-    taobao_option_prices: List[int] = Form(...),
-    thumbnail: str = Form(...),
-    details: str = Form(...)
+    coupang_link: Optional[str] = Form(""),
+    taobao_link: Optional[str] = Form(""),
+    coupang_option_names: Optional[List[str]] = Form([]),
+    coupang_option_prices: Optional[List[int]] = Form([]),
+    taobao_option_names: Optional[List[str]] = Form([]),
+    taobao_option_prices: Optional[List[int]] = Form([]),
+    thumbnail: Optional[str] = Form(""),
+    details: Optional[str] = Form("")
 ):
     coupang_options = json.dumps([
         {"name": n, "price": p} for n, p in zip(coupang_option_names, coupang_option_prices)
@@ -158,14 +159,14 @@ def edit_product(
     product_id: int,
     name: str = Form(...),
     price: int = Form(...),
-    coupang_link: str = Form(...),
-    taobao_link: str = Form(...),
-    coupang_option_names: List[str] = Form(...),
-    coupang_option_prices: List[int] = Form(...),
-    taobao_option_names: List[str] = Form(...),
-    taobao_option_prices: List[int] = Form(...),
-    thumbnail: str = Form(...),
-    details: str = Form(...)
+    coupang_link: Optional[str] = Form(""),
+    taobao_link: Optional[str] = Form(""),
+    coupang_option_names: Optional[List[str]] = Form([]),
+    coupang_option_prices: Optional[List[int]] = Form([]),
+    taobao_option_names: Optional[List[str]] = Form([]),
+    taobao_option_prices: Optional[List[int]] = Form([]),
+    thumbnail: Optional[str] = Form(""),
+    details: Optional[str] = Form("")
 ):
     coupang_options = json.dumps([
         {"name": n, "price": p} for n, p in zip(coupang_option_names, coupang_option_prices)
