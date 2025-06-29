@@ -1,15 +1,8 @@
-<!-- templates/product_detail.html -->
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ product.name }} 상세 정보</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container py-4">
-    <h2 class="mb-4">📄 상품 상세 정보</h2>
-
-    <div class="card mb-4">
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📦 상품 상세 정보</h2>
+    <div class="card mb-4 shadow-sm">
         <div class="row g-0">
             <div class="col-md-4">
                 <img src="{{ product.thumbnail }}" class="img-fluid rounded-start" alt="썸네일">
@@ -17,9 +10,10 @@
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">💰 기본 가격: {{ product.price }}원</p>
-                    <p class="card-text">🔗 쿠팡: <a href="{{ product.coupang_link }}" target="_blank">링크</a></p>
-                    <p class="card-text">🔗 타오바오: <a href="{{ product.taobao_link }}" target="_blank">링크</a></p>
+                    <p class="card-text"><strong>기본 가격:</strong> {{ product.price }}원</p>
+                    <p class="card-text"><strong>쿠팡 링크:</strong> <a href="{{ product.coupang_link }}" target="_blank">바로가기</a></p>
+                    <p class="card-text"><strong>타오바오 링크:</strong> <a href="{{ product.taobao_link }}" target="_blank">바로가기</a></p>
+                    <p class="card-text"><strong>상세 정보:</strong><br>{{ product.details | replace('\n', '<br>') | safe }}</p>
                 </div>
             </div>
         </div>
@@ -27,39 +21,46 @@
 
     <div class="row">
         <div class="col-md-6">
-            <h5>🛒 쿠팡 옵션</h5>
-            <ul class="list-group">
-                {% for opt in coupang_options %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ opt.name }}
-                    <span class="badge bg-primary rounded-pill">{{ opt.price }}원</span>
-                </li>
-                {% endfor %}
-            </ul>
+            <h4>📦 쿠팡 옵션</h4>
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>옵션명</th>
+                        <th>가격</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for option in coupang_options %}
+                        <tr>
+                            <td>{{ option.name }}</td>
+                            <td>{{ option.price }}원</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-
         <div class="col-md-6">
-            <h5>📦 타오바오 옵션</h5>
-            <ul class="list-group">
-                {% for opt in taobao_options %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ opt.name }}
-                    <span class="badge bg-success rounded-pill">{{ opt.price }}원</span>
-                </li>
-                {% endfor %}
-            </ul>
+            <h4>📦 타오바오 옵션</h4>
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>옵션명</th>
+                        <th>가격</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for option in taobao_options %}
+                        <tr>
+                            <td>{{ option.name }}</td>
+                            <td>{{ option.price }}원</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-
     <div class="mt-4">
-        <h5>📑 제품 상세 정보 (예상 CS 답변)</h5>
-        <div class="border p-3 bg-light">
-            <pre class="mb-0">{{ product.details }}</pre>
-        </div>
+        <a href="/admin/products" class="btn btn-secondary">목록으로 돌아가기</a>
     </div>
-
-    <div class="mt-4">
-        <a href="/admin/products" class="btn btn-secondary">🔙 목록으로</a>
-    </div>
-</body>
-</html>
+</div>
+{% endblock %}
