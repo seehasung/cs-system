@@ -1,24 +1,26 @@
 <!-- templates/login.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>로그인</title>
-</head>
-<body>
-    <p><a href="/" class="btn btn-outline-secondary">← 홈으로 돌아가기</a></p> <!-- ✅ 추가 -->
-
-    <h2>로그인</h2>
-
-    <form method="post" action="/login">
-        <label>아이디:</label>
-        <input type="text" name="username" required><br><br>
-        <label>비밀번호:</label>
-        <input type="password" name="password" required><br><br>
-        <button type="submit">로그인</button>
-    </form>
-
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}로그인{% endblock %}
+{% block content %}
+<div class="container mt-5" style="max-width: 400px;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">🔐 로그인</h3>
+            <form method="post" action="/login">
+                <div class="mb-3">
+                    <label for="username" class="form-label">아이디</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">로그인</button>
+            </form>
+            <p class="mt-3 text-center">
+                아직 계정이 없으신가요? <a href="/register">회원가입</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
