@@ -77,6 +77,11 @@ def product_list(request: Request, keyword: str = ""):
         "products": products,
         "keyword": keyword
     })
+    
+# ✅ 상품 등록 폼
+@router.get("/products/create", response_class=HTMLResponse)
+def product_create_form(request: Request):
+    return templates.TemplateResponse("product_form.html", {"request": request, "product": None})    
 
 # ✅ 상품 상세 보기
 @router.get("/products/{product_id}", response_class=HTMLResponse)
@@ -88,10 +93,7 @@ def product_detail(request: Request, product_id: int):
         return RedirectResponse("/admin/products", status_code=302)
     return templates.TemplateResponse("product_detail.html", {"request": request, "product": product})
 
-# ✅ 상품 등록 폼
-@router.get("/products/create", response_class=HTMLResponse)
-def product_create_form(request: Request):
-    return templates.TemplateResponse("product_form.html", {"request": request, "product": None})
+
 
 # ✅ 상품 등록 처리
 @router.post("/products/create")
