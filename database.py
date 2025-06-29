@@ -1,7 +1,6 @@
 # database.py
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, Text
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy import Column, Integer, String, Boolean
 from passlib.hash import bcrypt
 
 DATABASE_URL = "sqlite:///./csdata.db"
@@ -18,7 +17,20 @@ class User(Base):
     password = Column(String)
     is_admin = Column(Boolean, default=False)  # 권한 필드 추가
 
-__all__ = ["User", "SessionLocal", "Base"]
+# 상품 테이블 정의
+class Product(Base):
+    __tablename__ = "products"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)          # 상품명
+    coupang_link = Column(String(2083))                 # 쿠팡 상품 페이지 URL
+    taobao_link = Column(String(2083))                  # 타오바오 상품 페이지 URL
+    coupang_options = Column(Text)                      # 쿠팡 옵션 목록 (이름과 가격 JSON 등으로 저장)
+    taobao_options = Column(Text)                       # 타오바오 옵션 목록 (JSON 문자열 등)
+    thumbnail = Column(String(2083))                    # 썸네일 이미지 URL
+    details = Column(Text)                              # 제품 상세 정보 (예상 CS 답변 등)
+
+__all__ = ["User", "Product", "SessionLocal", "Base"]
 
 # ✅ 최초 관리자 계정 생성 (한 번만 실행되도록)
 def create_super_admin():
@@ -26,7 +38,7 @@ def create_super_admin():
     if db.query(User).count() == 0:
         super_admin = User(
             username="shsboss274",  # 원하는 아이디
-            password=bcrypt.hash("shsboss274"),  # 원하는 비밀번호
+            password=bcrypt.hash("shsboss274"),  # 원하는 비밀로
             is_admin=True
         )
         db.add(super_admin)

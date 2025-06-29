@@ -87,21 +87,59 @@ def product_create_form(request: Request):
 @router.post("/products/create")
 def product_create(
     name: str = Form(...),
-    price: int = Form(...),
     coupang_link: str = Form(...),
     taobao_link: str = Form(...),
-    thumbnail: str = Form(...)
+    coupang_options: str = Form(...),
+    taobao_options: str = Form(...),
+    thumbnail: str = Form(...),
+    details: str = Form(...)
 ):
     db = SessionLocal()
     new_product = Product(
         name=name,
-        price=price,
         coupang_link=coupang_link,
         taobao_link=taobao_link,
-        thumbnail=thumbnail
+        coupang_options=coupang_options,
+        taobao_options=taobao_options,
+        thumbnail=thumbnail,
+        details=details
     )
     db.add(new_product)
     db.commit()
+    db.close()
+    return RedirectResponse("/admin/products", status_code=302)
+
+# ✅ 상품 수정 폼
+@router.get("/products/edit/{product_id}", response_class=HTMLResponse)
+def edit_product_form(request: Request, product_id: int):
+    db = SessionLocal()
+    product = db.query(Product).filter(Product.id == product_id).first()
+    db.close()
+    return templates.TemplateResponse("product_form.html", {"request": request, "product": product})
+
+# ✅ 상품 수정 처리
+@router.post("/products/edit/{product_id}")
+def edit_product(
+    product_id: int,
+    name: str = Form(...),
+    coupang_link: str = Form(...),
+    taobao_link: str = Form(...),
+    coupang_options: str = Form(...),
+    taobao_options: str = Form(...),
+    thumbnail: str = Form(...),
+    details: str = Form(...)
+):
+    db = SessionLocal()
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if product:
+        product.name = name
+        product.coupang_link = coupang_link
+        product.taobao_link = taobao_link
+        product.coupang_options = coupang_options
+        product.taobao_options = taobao_options
+        product.thumbnail = thumbnail
+        product.details = details
+        db.commit()
     db.close()
     return RedirectResponse("/admin/products", status_code=302)
 
