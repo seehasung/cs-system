@@ -77,21 +77,6 @@ def product_list(request: Request, keyword: str = ""):
         "keyword": keyword
     })
 
-# ✅ 상품 상세 보기
-@router.get("/products/{product_id}", response_class=HTMLResponse)
-def product_detail(request: Request, product_id: int):
-    db = SessionLocal()
-    product = db.query(Product).filter(Product.id == product_id).first()
-    db.close()
-    if not product:
-        return RedirectResponse("/admin/products", status_code=302)
-    return templates.TemplateResponse("product_detail.html", {
-        "request": request,
-        "product": product,
-        "coupang_options": json.loads(product.coupang_options or "[]"),
-        "taobao_options": json.loads(product.taobao_options or "[]")
-    })
-
 # ✅ 상품 등록 폼
 @router.get("/products/create", response_class=HTMLResponse)
 def product_create_form(request: Request):
@@ -101,7 +86,7 @@ def product_create_form(request: Request):
         "coupang_options": [],
         "taobao_options": []
     })
-
+    
 # ✅ 상품 등록 처리
 @router.post("/products/create")
 def product_create(
@@ -139,6 +124,25 @@ def product_create(
     db.commit()
     db.close()
     return RedirectResponse("/admin/products", status_code=302)
+
+# ✅ 상품 상세 보기
+@router.get("/products/{product_id}", response_class=HTMLResponse)
+def product_detail(request: Request, product_id: int):
+    db = SessionLocal()
+    product = db.query(Product).filter(Product.id == product_id).first()
+    db.close()
+    if not product:
+        return RedirectResponse("/admin/products", status_code=302)
+    return templates.TemplateResponse("product_detail.html", {
+        "request": request,
+        "product": product,
+        "coupang_options": json.loads(product.coupang_options or "[]"),
+        "taobao_options": json.loads(product.taobao_options or "[]")
+    })
+
+
+
+
 
 # ✅ 상품 수정 폼
 @router.get("/products/edit/{product_id}", response_class=HTMLResponse)
