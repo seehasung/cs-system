@@ -87,13 +87,20 @@ def product_detail(request: Request, product_id: int):
         return RedirectResponse("/admin/products", status_code=302)
     return templates.TemplateResponse("product_detail.html", {
         "request": request,
-        "product": product
+        "product": product,
+        "coupang_options": json.loads(product.coupang_options or "[]"),
+        "taobao_options": json.loads(product.taobao_options or "[]")
     })
 
 # ✅ 상품 등록 폼
 @router.get("/products/create", response_class=HTMLResponse)
 def product_create_form(request: Request):
-    return templates.TemplateResponse("product_form.html", {"request": request, "product": None})
+    return templates.TemplateResponse("product_form.html", {
+        "request": request,
+        "product": None,
+        "coupang_options": [],
+        "taobao_options": []
+    })
 
 # ✅ 상품 등록 처리
 @router.post("/products/create")
@@ -138,7 +145,12 @@ def edit_product_form(request: Request, product_id: int):
     db = SessionLocal()
     product = db.query(Product).filter(Product.id == product_id).first()
     db.close()
-    return templates.TemplateResponse("product_form.html", {"request": request, "product": product})
+    return templates.TemplateResponse("product_form.html", {
+        "request": request,
+        "product": product,
+        "coupang_options": json.loads(product.coupang_options or "[]"),
+        "taobao_options": json.loads(product.taobao_options or "[]")
+    })
 
 # ✅ 상품 수정 처리
 @router.post("/products/edit/{product_id}")
