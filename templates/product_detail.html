@@ -1,42 +1,60 @@
+<!-- templates/product_detail.html -->
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>상품 상세 정보</title>
-    <style>
-        body { font-family: Arial; line-height: 1.5; margin: 20px; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; }
-        th { background-color: #f4f4f4; }
-    </style>
+    <meta charset="UTF-8">
+    <title>상품 상세</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h2>📦 상품 상세 정보</h2>
-    <p><strong>상품명:</strong> {{ product.name }}</p>
-    <p><strong>가격:</strong> {{ product.price }}</p>
-    <p><strong>쿠팡 링크:</strong> <a href="{{ product.coupang_link }}" target="_blank">바로가기</a></p>
-    <p><strong>타오바오 링크:</strong> <a href="{{ product.taobao_link }}" target="_blank">바로가기</a></p>
-    <p><strong>썸네일:</strong><br><img src="{{ product.thumbnail }}" width="100"></p>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="mb-4">📦 상품 상세 정보</h2>
 
-    <h3>옵션 정보</h3>
-    <table>
-        <tr><th>타오바오 옵션명</th><th>타오바오 가격</th><th>쿠팡 옵션명</th><th>쿠팡 가격</th></tr>
-        {% for opt in product.options %}
-        <tr>
-            <td>{{ opt.taobao_option_name }}</td>
-            <td>{{ opt.taobao_option_price }}</td>
-            <td>{{ opt.coupang_option_name }}</td>
-            <td>{{ opt.coupang_option_price }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                {{ product.name }}
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">쿠팡 링크</label>
+                        <div><a href="{{ product.coupang_link }}" target="_blank">{{ product.coupang_link }}</a></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">타오바오 링크</label>
+                        <div><a href="{{ product.taobao_link }}" target="_blank">{{ product.taobao_link }}</a></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">썸네일 이미지</label><br>
+                        {% if product.thumbnail %}
+                            <img src="{{ product.thumbnail }}" alt="썸네일" class="img-fluid rounded">
+                        {% else %}
+                            <div class="text-muted">이미지 없음</div>
+                        {% endif %}
+                    </div>
+                </div>
 
-    <h3>예상 CS 답변</h3>
-    <ul>
-        {% for ans in product.cs_answers %}
-        <li>{{ ans.content }}</li>
-        {% endfor %}
-    </ul>
+                <div class="mb-3">
+                    <label class="form-label">쿠팡 옵션</label>
+                    <pre class="bg-light p-2 border">{{ product.coupang_options }}</pre>
+                </div>
 
-    <p><a href="/admin/products">← 목록으로</a></p>
+                <div class="mb-3">
+                    <label class="form-label">타오바오 옵션</label>
+                    <pre class="bg-light p-2 border">{{ product.taobao_options }}</pre>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">예상 CS 답변 (제품 상세)</label>
+                    <pre class="bg-light p-2 border">{{ product.details }}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="/admin/products" class="btn btn-secondary">← 목록으로</a>
+            <a href="/admin/products/edit/{{ product.id }}" class="btn btn-primary">✏️ 수정</a>
+        </div>
+    </div>
 </body>
 </html>
