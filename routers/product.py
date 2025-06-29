@@ -2,6 +2,8 @@ from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from typing import List
+import json
 
 from database import SessionLocal, User, Product
 
@@ -21,10 +23,7 @@ def admin_users(request: Request, search: str = ""):
         db.close()
         return RedirectResponse("/", status_code=302)
 
-    if search:
-        users = db.query(User).filter(User.username.contains(search)).all()
-    else:
-        users = db.query(User).all()
+    users = db.query(User).filter(User.username.contains(search)).all() if search else db.query(User).all()
     db.close()
     return templates.TemplateResponse("admin_users_bootstrap.html", {
         "request": request,
@@ -77,11 +76,6 @@ def product_list(request: Request, keyword: str = ""):
         "products": products,
         "keyword": keyword
     })
-    
-# ✅ 상품 등록 폼
-@router.get("/products/create", response_class=HTMLResponse)
-def product_create_form(request: Request):
-    return templates.TemplateResponse("product_form.html", {"request": request, "product": None})    
 
 # ✅ 상품 상세 보기
 @router.get("/products/{product_id}", response_class=HTMLResponse)
@@ -91,24 +85,41 @@ def product_detail(request: Request, product_id: int):
     db.close()
     if not product:
         return RedirectResponse("/admin/products", status_code=302)
-    return templates.TemplateResponse("product_detail.html", {"request": request, "product": product})
+    return templates.TemplateResponse("product_detail.html", {
+        "request": request,
+        "product": product
+    })
 
-
+# ✅ 상품 등록 폼
+@router.get("/products/create", response_class=HTMLResponse)
+def product_create_form(request: Request):
+    return templates.TemplateResponse("product_form.html", {"request": request, "product": None})
 
 # ✅ 상품 등록 처리
 @router.post("/products/create")
 def product_create(
     name: str = Form(...),
+    price: int = Form(...),
     coupang_link: str = Form(...),
     taobao_link: str = Form(...),
-    coupang_options: str = Form(...),
-    taobao_options: str = Form(...),
+    coupang_option_names: List[str] = Form(...),
+    coupang_option_prices: List[int] = Form(...),
+    taobao_option_names: List[str] = Form(...),
+    taobao_option_prices: List[int] = Form(...),
     thumbnail: str = Form(...),
     details: str = Form(...)
 ):
+    coupang_options = json.dumps([
+        {"name": n, "price": p} for n, p in zip(coupang_option_names, coupang_option_prices)
+    ])
+    taobao_options = json.dumps([
+        {"name": n, "price": p} for n, p in zip(taobao_option_names, taobao_option_prices)
+    ])
+
     db = SessionLocal()
     new_product = Product(
         name=name,
+        price=price,
         coupang_link=coupang_link,
         taobao_link=taobao_link,
         coupang_options=coupang_options,
@@ -134,17 +145,28 @@ def edit_product_form(request: Request, product_id: int):
 def edit_product(
     product_id: int,
     name: str = Form(...),
+    price: int = Form(...),
     coupang_link: str = Form(...),
     taobao_link: str = Form(...),
-    coupang_options: str = Form(...),
-    taobao_options: str = Form(...),
+    coupang_option_names: List[str] = Form(...),
+    coupang_option_prices: List[int] = Form(...),
+    taobao_option_names: List[str] = Form(...),
+    taobao_option_prices: List[int] = Form(...),
     thumbnail: str = Form(...),
     details: str = Form(...)
 ):
+    coupang_options = json.dumps([
+        {"name": n, "price": p} for n, p in zip(coupang_option_names, coupang_option_prices)
+    ])
+    taobao_options = json.dumps([
+        {"name": n, "price": p} for n, p in zip(taobao_option_names, taobao_option_prices)
+    ])
+
     db = SessionLocal()
     product = db.query(Product).filter(Product.id == product_id).first()
     if product:
         product.name = name
+        product.price = price
         product.coupang_link = coupang_link
         product.taobao_link = taobao_link
         product.coupang_options = coupang_options
