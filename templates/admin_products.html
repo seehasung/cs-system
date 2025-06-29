@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>상품 관리</title>
+    <style>
+        input[type="text"] { padding: 4px; margin-right: 8px; }
+        button { padding: 4px 10px; }
+    </style>
+</head>
+<body>
+    <h2>📦 상품 DB 관리</h2>
+
+    <form method="get" action="/admin/products">
+        <input type="text" name="keyword" placeholder="상품명 검색" value="{{ keyword }}">
+        <button type="submit">🔍 검색</button>
+        <a href="/admin/products/create">➕ 신규 상품 등록</a>
+    </form>
+
+    <br>
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>ID</th><th>상품명</th><th>가격</th><th>쿠팡링크</th><th>타오바오링크</th><th>썸네일</th><th>삭제</th>
+        </tr>
+        {% for p in products %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.price }}</td>
+            <td><a href="{{ p.coupang_link }}" target="_blank">Coupang</a></td>
+            <td><a href="{{ p.taobao_link }}" target="_blank">Taobao</a></td>
+            <td><img src="{{ p.thumbnail }}" width="60"></td>
+            <td>
+                <form method="post" action="/admin/products/delete" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                    <input type="hidden" name="product_id" value="{{ p.id }}">
+                    <button type="submit">🗑️ 삭제</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

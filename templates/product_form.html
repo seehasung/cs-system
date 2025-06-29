@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>상품 등록</title>
+</head>
+<body>
+    <h2>➕ 신규 상품 등록</h2>
+    <form method="post" action="/admin/products/create">
+        <p>상품명: <input type="text" name="name" required></p>
+        <p>가격(숫자): <input type="number" name="price" required></p>
+        <p>쿠팡 링크: <input type="text" name="coupang_link"></p>
+        <p>타오바오 링크: <input type="text" name="taobao_link"></p>
+        <p>썸네일 URL: <input type="text" name="thumbnail"></p>
+        <p><button type="submit">등록하기</button> <a href="/admin/products">← 목록으로</a></p>
+    </form>
+</body>
+</html>
