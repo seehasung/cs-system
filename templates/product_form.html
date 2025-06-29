@@ -45,10 +45,10 @@
           {% for opt in coupang_options %}
           <div class="row mb-2">
             <div class="col">
-              <input type="text" name="coupang_option_names[]" class="form-control" value="{{ opt.name }}" required>
+              <input type="text" name="coupang_option_names" class="form-control" value="{{ opt.name }}" required>
             </div>
             <div class="col">
-              <input type="number" name="coupang_option_prices[]" class="form-control" value="{{ opt.price }}" required>
+              <input type="number" name="coupang_option_prices" class="form-control" value="{{ opt.price }}" required>
             </div>
             <div class="col-auto">
               <button type="button" class="btn btn-danger" onclick="this.closest('.row').remove()">삭제</button>
@@ -67,10 +67,10 @@
           {% for opt in taobao_options %}
           <div class="row mb-2">
             <div class="col">
-              <input type="text" name="taobao_option_names[]" class="form-control" value="{{ opt.name }}" required>
+              <input type="text" name="taobao_option_names" class="form-control" value="{{ opt.name }}" required>
             </div>
             <div class="col">
-              <input type="number" name="taobao_option_prices[]" class="form-control" value="{{ opt.price }}" required>
+              <input type="number" name="taobao_option_prices" class="form-control" value="{{ opt.price }}" required>
             </div>
             <div class="col-auto">
               <button type="button" class="btn btn-danger" onclick="this.closest('.row').remove()">삭제</button>
