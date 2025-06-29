@@ -11,10 +11,10 @@
       row.className = "row mb-2";
       row.innerHTML = `
         <div class="col">
-          <input type="text" name="${nameInputName}[]" class="form-control" placeholder="옵션명" required>
+          <input type="text" name="${nameInputName}" class="form-control" placeholder="옵션명" required>
         </div>
         <div class="col">
-          <input type="number" name="${priceInputName}[]" class="form-control" placeholder="가격" required>
+          <input type="number" name="${priceInputName}" class="form-control" placeholder="가격" required>
         </div>
         <div class="col-auto">
           <button type="button" class="btn btn-danger" onclick="this.closest('.row').remove()">삭제</button>
