@@ -26,6 +26,7 @@
 </head>
 <body class="container py-4">
   <h2 class="mb-4">📦 상품 등록/수정</h2>
+  <a href="/" class="btn btn-outline-dark">🏠 홈으로</a>
 
   <form method="post" action="{{ '/admin/products/edit/' ~ product.id if product else '/admin/products/create' }}">
     <div class="mb-3">
