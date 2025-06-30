@@ -30,7 +30,7 @@
                 <td>
                     <a href="/admin/products/{{ p.id }}" class="text-decoration-none">{{ p.name }}</a>
                 </td>
-                <td>{{ p.price }}</td>
+                <td><td>{{ "{:,}".format(p.price) }}원</td></td>
                 <td><a href="{{ p.coupang_link }}" target="_blank" class="btn btn-outline-secondary btn-sm">Coupang</a></td>
                 <td><a href="{{ p.taobao_link }}" target="_blank" class="btn btn-outline-secondary btn-sm">Taobao</a></td>
                 <td><img src="{{ p.thumbnail }}" width="60"></td>
