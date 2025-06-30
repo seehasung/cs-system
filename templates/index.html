@@ -8,11 +8,12 @@
 
     <div style="margin-bottom: 1em;">
       <a class="btn btn-warning" href="/change-password">비밀번호 변경</a>
+      <a href="/products" class="btn btn-primary">📦 상품 조회</a>
+      <a href="/products/create" class="btn btn-success">➕ 상품 등록 및 수정</a>
 
       {% if is_admin %}
         <a href="/admin/users" class="btn btn-secondary">👥 사용자 관리</a>
-        <a href="/admin/products" class="btn btn-primary">📦 상품 조회</a>
-        <a href="/admin/products/create" class="btn btn-success">➕ 상품 등록 및 수정</a>
+
       {% endif %}
     </div>
   {% else %}

@@ -6,7 +6,7 @@
 <body>
     <h2>📦 등록된 상품 목록</h2>
 
-    <p><a href="/admin/products/new">➕ 상품 등록</a></p>
+    <p><a href="/products/new">➕ 상품 등록</a></p>
 
     <table border="1">
         <tr>
@@ -31,7 +31,7 @@
                 {% endif %}
             </td>
             <td>
-                <a href="/admin/products/edit/{{ product.id }}">✏️ 수정</a>
+                <a href="/products/edit/{{ product.id }}">✏️ 수정</a>
             </td>
         </tr>
         {% endfor %}

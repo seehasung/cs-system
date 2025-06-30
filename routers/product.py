@@ -123,7 +123,7 @@ def product_create(
     db.add(new_product)
     db.commit()
     db.close()
-    return RedirectResponse("/admin/products", status_code=302)
+    return RedirectResponse("/products", status_code=302)
 
 # ✅ 상품 상세 보기
 @router.get("/products/{product_id}", response_class=HTMLResponse)
@@ -132,7 +132,7 @@ def product_detail(request: Request, product_id: int):
     product = db.query(Product).filter(Product.id == product_id).first()
     db.close()
     if not product:
-        return RedirectResponse("/admin/products", status_code=302)
+        return RedirectResponse("/products", status_code=302)
     return templates.TemplateResponse("product_detail.html", {
         "request": request,
         "product": product,
@@ -192,7 +192,7 @@ def edit_product(
         product.details = details
         db.commit()
     db.close()
-    return RedirectResponse("/admin/products", status_code=302)
+    return RedirectResponse("/products", status_code=302)
 
 # ✅ 상품 삭제
 @router.post("/products/delete")
@@ -203,4 +203,4 @@ def product_delete(product_id: int = Form(...)):
         db.delete(product)
         db.commit()
     db.close()
-    return RedirectResponse("/admin/products", status_code=302)
+    return RedirectResponse("/products", status_code=302)
