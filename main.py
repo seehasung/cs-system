@@ -20,7 +20,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)         # 로그인 등
 app.include_router(admin.router)        # 관리자 관련
 app.include_router(admin_users.router, prefix="/admin")
-app.include_router(product.router, prefix="/admin")
+app.include_router(product.router)
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
