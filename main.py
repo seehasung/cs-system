@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from database import Base, engine, SessionLocal, User
-from routers import auth, admin
+from routers import auth
 from routers import admin_users
 from routers import product
 
@@ -18,7 +18,6 @@ Base.metadata.create_all(bind=engine)
 
 # 라우터 등록
 app.include_router(auth.router)         # 로그인 등
-app.include_router(admin.router)        # 관리자 관련
 app.include_router(admin_users.router, prefix="/admin")
 app.include_router(product.router)
 
