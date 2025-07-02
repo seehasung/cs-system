@@ -5,11 +5,17 @@
 <div class="container mt-4">
     <h2 class="mb-3">📦 상품 DB 관리</h2>
 
-    <form method="get" action="/products" class="mb-3 d-flex">
-        <input type="text" name="keyword" class="form-control me-2" placeholder="상품명 검색" value="{{ keyword }}">
-        <button type="submit" class="btn btn-primary me-2">🔍 검색</button>
-        <a href="/products/create" class="btn btn-success">➕ 신규 상품 등록</a>
-    </form>
+    <div class="d-flex justify-content-between mb-3">
+        <form method="get" action="/products" class="d-flex">
+            <input type="text" name="keyword" class="form-control me-2" placeholder="상품명 검색" value="{{ keyword }}">
+            <button type="submit" class="btn btn-primary">🔍 검색</button>
+        </form>
+        
+        <div>
+            <a href="/products/create" class="btn btn-success">➕ 신규 상품 등록</a>
+            <a href="/" class="btn btn-secondary">🏠 홈으로</a>
+        </div>
+    </div>
 
     <table class="table table-bordered table-hover text-center align-middle">
         <thead class="table-dark">
