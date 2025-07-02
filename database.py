@@ -52,4 +52,4 @@ def create_super_admin():
 
 # DB 테이블 생성 및 최초 관리자 등록
 #Base.metadata.create_all(bind=engine)
-create_super_admin()
+#create_super_admin()
