@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, Form
+from sqlalchemy.exc import IntegrityError
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -87,7 +88,7 @@ def product_create_form(request: Request):
         "taobao_options": []
     })
     
-# ✅ 상품 등록 처리
+# ✅ 상품 등록 처리 (수정된 최종 버전)
 @router.post("/products/create")
 def product_create(
     request: Request,
@@ -113,23 +114,42 @@ def product_create(
     ])
 
     db = SessionLocal()
-    new_product = Product(
-        product_code=product_code,
-        name=name,
-        price=price,
-        kd_paid=(kd_paid == "on"),
-        customs_paid=(customs_paid == "on"),
-        coupang_link=coupang_link,
-        taobao_link=taobao_link,
-        coupang_options=coupang_options,
-        taobao_options=taobao_options,
-        thumbnail=thumbnail,
-        details=details
-    )
-    db.add(new_product)
-    db.commit()
-    db.close()
-    return RedirectResponse("/products?success=create", status_code=302)
+    
+    try:
+        new_product = Product(
+            product_code=product_code,
+            name=name,
+            price=price,
+            kd_paid=(kd_paid == "on"),
+            customs_paid=(customs_paid == "on"),
+            coupang_link=coupang_link,
+            taobao_link=taobao_link,
+            coupang_options=coupang_options,
+            taobao_options=taobao_options,
+            thumbnail=thumbnail,
+            details=details
+        )
+        db.add(new_product)
+        db.commit()
+        db.close()
+        return RedirectResponse("/products?success=create", status_code=302)
+    except IntegrityError:
+        db.rollback()
+        db.close()
+        form_data = {
+            "product_code": product_code, "name": name, "price": price,
+            "kd_paid": (kd_paid == "on"), "customs_paid": (customs_paid == "on"),
+            "coupang_link": coupang_link, "taobao_link": taobao_link,
+            "thumbnail": thumbnail, "details": details
+        }
+        return templates.TemplateResponse("product_form.html", {
+            "request": request,
+            "error": "이미 사용 중인 상품 ID입니다.",
+            "product": form_data,
+            "coupang_options": json.loads(coupang_options or "[]"),
+            "taobao_options": json.loads(taobao_options or "[]")
+        })
+
 
 # ✅ 상품 상세 보기
 @router.get("/products/{product_id}", response_class=HTMLResponse)
@@ -146,10 +166,6 @@ def product_detail(request: Request, product_id: int):
         "taobao_options": json.loads(product.taobao_options or "[]")
     })
 
-
-
-
-
 # ✅ 상품 수정 폼
 @router.get("/products/edit/{product_id}", response_class=HTMLResponse)
 def edit_product_form(request: Request, product_id: int):
@@ -163,9 +179,10 @@ def edit_product_form(request: Request, product_id: int):
         "taobao_options": json.loads(product.taobao_options or "[]")
     })
 
-# ✅ 상품 수정 처리
+# ✅ 상품 수정 처리 (수정된 최종 버전)
 @router.post("/products/edit/{product_id}")
 def edit_product(
+    request: Request, # request 파라미터 추가
     product_id: int,
     product_code: str = Form(...),
     name: str = Form(...),
@@ -190,22 +207,43 @@ def edit_product(
 
     db = SessionLocal()
     product = db.query(Product).filter(Product.id == product_id).first()
-    if product:
-        product.product_code = product_code
-        product.name = name
-        product.price = price
-        product.kd_paid = (kd_paid == "on")
-        product.customs_paid = (customs_paid == "on")
-        product.coupang_link = coupang_link
-        product.taobao_link = taobao_link
-        product.coupang_options = coupang_options
-        product.taobao_options = taobao_options
-        product.thumbnail = thumbnail
-        product.details = details
-        db.commit()
-    db.close()
-    return RedirectResponse("/products?success=create", status_code=302)
-
+    
+    try:
+        if product:
+            product.product_code = product_code
+            product.name = name
+            product.price = price
+            product.kd_paid = (kd_paid == "on")
+            product.customs_paid = (customs_paid == "on")
+            product.coupang_link = coupang_link
+            product.taobao_link = taobao_link
+            product.coupang_options = coupang_options
+            product.taobao_options = taobao_options
+            product.thumbnail = thumbnail
+            product.details = details
+            db.commit()
+        db.close()
+        return RedirectResponse("/products?success=edit", status_code=302) # create -> edit 으로 수정
+    except IntegrityError:
+        db.rollback()
+        db.close()
+        # 에러 발생 시, 현재 product 객체에 입력된 값을 덮어써서 form에 전달
+        form_data_from_product = product.__dict__
+        form_data_from_product.update({
+             "product_code": product_code, "name": name, "price": price,
+            "kd_paid": (kd_paid == "on"), "customs_paid": (customs_paid == "on"),
+            "coupang_link": coupang_link, "taobao_link": taobao_link,
+            "thumbnail": thumbnail, "details": details
+        })
+        return templates.TemplateResponse("product_form.html", {
+            "request": request,
+            "error": "이미 사용 중인 상품 ID입니다.",
+            "product": form_data_from_product,
+            "coupang_options": json.loads(coupang_options or "[]"),
+            "taobao_options": json.loads(taobao_options or "[]")
+        })
+        
+        
 # ✅ 상품 삭제
 @router.post("/products/delete")
 def product_delete(product_id: int = Form(...)):
