@@ -22,6 +22,7 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
+    product_code = Column(String, unique=True, index=True, nullable=False) # 사용자 정의 상품 ID
     name = Column(String(255), nullable=False)          # 상품명
     price = Column(Integer)
     kd_paid = Column(Boolean, default=False) # 경동 대납 여부

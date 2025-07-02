@@ -91,6 +91,7 @@ def product_create_form(request: Request):
 @router.post("/products/create")
 def product_create(
     request: Request,
+    product_code: str = Form(...),
     name: str = Form(...),
     price: int = Form(...),
     kd_paid: Optional[str] = Form(None),
@@ -113,6 +114,7 @@ def product_create(
 
     db = SessionLocal()
     new_product = Product(
+        product_code=product_code,
         name=name,
         price=price,
         kd_paid=(kd_paid == "on"),
@@ -165,6 +167,7 @@ def edit_product_form(request: Request, product_id: int):
 @router.post("/products/edit/{product_id}")
 def edit_product(
     product_id: int,
+    product_code: str = Form(...),
     name: str = Form(...),
     price: int = Form(...),
     kd_paid: Optional[str] = Form(None),
@@ -188,6 +191,7 @@ def edit_product(
     db = SessionLocal()
     product = db.query(Product).filter(Product.id == product_id).first()
     if product:
+        product.product_code = product_code
         product.name = name
         product.price = price
         product.kd_paid = (kd_paid == "on")

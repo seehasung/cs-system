@@ -28,7 +28,7 @@
         <tbody>
             {% for p in products %}
             <tr>
-                <td>{{ p.id }}</td>
+                <td>{{ p.product_code }}</td>
                 <td><img src="{{ p.thumbnail }}" width="60"></td>
                 <td>
                     <a href="/products/{{ p.id }}" class="text-decoration-none">{{ p.name }}</a>
