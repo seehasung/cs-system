@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Boolean, Text
 from sqlalchemy.orm import sessionmaker, declarative_base
 from passlib.hash import bcrypt
 
-DATABASE_URL = "sqlite:///./csdata.db"
+DATABASE_URL = "sqlite:////data/csdata.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 Base = declarative_base()
@@ -51,5 +51,5 @@ def create_super_admin():
     db.close()
 
 # DB 테이블 생성 및 최초 관리자 등록
-Base.metadata.create_all(bind=engine)
+#Base.metadata.create_all(bind=engine)
 create_super_admin()
