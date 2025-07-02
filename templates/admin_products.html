@@ -4,13 +4,11 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="mb-3">📦 상품 DB 관리</h2>
-    
-    <a href="/" class="btn btn-outline-dark">🏠 홈으로</a>
 
-    <form method="get" action="/admin/products" class="mb-3 d-flex">
+    <form method="get" action="/products" class="mb-3 d-flex">
         <input type="text" name="keyword" class="form-control me-2" placeholder="상품명 검색" value="{{ keyword }}">
         <button type="submit" class="btn btn-primary me-2">🔍 검색</button>
-        <a href="/admin/products/create" class="btn btn-success">➕ 신규 상품 등록</a>
+        <a href="/products/create" class="btn btn-success">➕ 신규 상품 등록</a>
     </form>
 
     <table class="table table-bordered table-hover text-center align-middle">
@@ -30,16 +28,16 @@
             <tr>
                 <td>{{ p.id }}</td>
                 <td>
-                    <a href="/admin/products/{{ p.id }}" class="text-decoration-none">{{ p.name }}</a>
+                    <a href="/products/{{ p.id }}" class="text-decoration-none">{{ p.name }}</a>
                 </td>
-                <td>{{ "{:,}".format(p.price) }}원</td>
+                <td>{{ p.price }}</td>
                 <td><a href="{{ p.coupang_link }}" target="_blank" class="btn btn-outline-secondary btn-sm">Coupang</a></td>
                 <td><a href="{{ p.taobao_link }}" target="_blank" class="btn btn-outline-secondary btn-sm">Taobao</a></td>
                 <td><img src="{{ p.thumbnail }}" width="60"></td>
                 <td>
                     <div class="d-flex justify-content-center gap-2">
-                        <a href="/admin/products/edit/{{ p.id }}" class="btn btn-sm btn-outline-primary">✏️ 수정</a>
-                        <form method="post" action="/admin/products/delete" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <a href="/products/edit/{{ p.id }}" class="btn btn-sm btn-outline-primary">✏️ 수정</a>
+                        <form method="post" action="/products/delete" onsubmit="return confirm('정말 삭제하시겠습니까?');">
                             <input type="hidden" name="product_id" value="{{ p.id }}">
                             <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ 삭제</button>
                         </form>

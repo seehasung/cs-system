@@ -6,7 +6,7 @@
 <body>
     <h2>✏️ 상품 수정</h2>
 
-    <form method="post" action="/admin/products/edit/{{ product.id }}">
+    <form method="post" action="/products/edit/{{ product.id }}">
         <p>상품명: <input type="text" name="name" value="{{ product.name }}"></p>
         <p>쿠팡링크: <input type="text" name="coupang_link" value="{{ product.coupang_link }}"></p>
         <p>타오바오링크: <input type="text" name="taobao_link" value="{{ product.taobao_link }}"></p>
@@ -22,7 +22,7 @@
         </p>
 
         <button type="submit">저장</button>
-        <a href="/admin/products">취소</a>
+        <a href="/products">취소</a>
     </form>
 </body>
 </html>
