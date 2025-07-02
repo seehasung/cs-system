@@ -129,7 +129,7 @@ def product_create(
     db.add(new_product)
     db.commit()
     db.close()
-    return RedirectResponse("/products", status_code=302)
+    return RedirectResponse("/products?success=create", status_code=302)
 
 # ✅ 상품 상세 보기
 @router.get("/products/{product_id}", response_class=HTMLResponse)
@@ -204,7 +204,7 @@ def edit_product(
         product.details = details
         db.commit()
     db.close()
-    return RedirectResponse("/products", status_code=302)
+    return RedirectResponse("/products?success=create", status_code=302)
 
 # ✅ 상품 삭제
 @router.post("/products/delete")
