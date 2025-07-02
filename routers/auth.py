@@ -39,7 +39,7 @@ def register_user(request: Request, username: str = Form(...), password: str = F
     db.commit()
     db.close()
     log_event(f"✅ 회원가입: {username}")
-    return RedirectResponse("/login", status_code=302)
+    return RedirectResponse("/login?registered=true", status_code=302)
 
 # 로그인 페이지
 @router.get("/login", response_class=HTMLResponse)
