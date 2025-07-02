@@ -6,6 +6,12 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <h3 class="card-title text-center mb-4">🔐 로그인</h3>
+
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
             <form method="post" action="/login">
                 <div class="mb-3">
                     <label for="username" class="form-label">아이디</label>
