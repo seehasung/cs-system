@@ -35,9 +35,26 @@
     </div>
 
     <div class="mb-3">
-      <label class="form-label">기본 가격</label>
-      <input type="number" name="price" class="form-control" value="{{ product.price if product else '' }}" required>
-    </div>
+        <label class="form-label">기본 가격</label>
+        <input type="number" name="price" class="form-control" value="{{ product.price if product else '' }}" required>
+      </div>
+
+      <div class="mb-3">
+          <label class="form-label">부가 옵션</label>
+          <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="kd_paid" id="kd_paid" {{ 'checked' if product and product.kd_paid else '' }}>
+              <label class="form-check-label" for="kd_paid">
+                  경동 대납
+              </label>
+          </div>
+          <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="customs_paid" id="customs_paid" {{ 'checked' if product and product.customs_paid else '' }}>
+              <label class="form-check-label" for="customs_paid">
+                  관세 대납
+              </label>
+          </div>
+      </div>
+    
 
     <div class="mb-3">
       <label class="form-label">쿠팡 옵션</label>

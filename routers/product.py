@@ -93,6 +93,8 @@ def product_create(
     request: Request,
     name: str = Form(...),
     price: int = Form(...),
+    kd_paid: Optional[str] = Form(None),
+    customs_paid: Optional[str] = Form(None),
     coupang_link: Optional[str] = Form(""),
     taobao_link: Optional[str] = Form(""),
     coupang_option_names: Optional[List[str]] = Form([]),
@@ -113,6 +115,8 @@ def product_create(
     new_product = Product(
         name=name,
         price=price,
+        kd_paid=(kd_paid == "on"),
+        customs_paid=(customs_paid == "on"),
         coupang_link=coupang_link,
         taobao_link=taobao_link,
         coupang_options=coupang_options,
@@ -163,6 +167,8 @@ def edit_product(
     product_id: int,
     name: str = Form(...),
     price: int = Form(...),
+    kd_paid: Optional[str] = Form(None),
+    customs_paid: Optional[str] = Form(None),
     coupang_link: Optional[str] = Form(""),
     taobao_link: Optional[str] = Form(""),
     coupang_option_names: Optional[List[str]] = Form([]),
@@ -184,6 +190,8 @@ def edit_product(
     if product:
         product.name = name
         product.price = price
+        product.kd_paid = (kd_paid == "on")
+        product.customs_paid = (customs_paid == "on")
         product.coupang_link = coupang_link
         product.taobao_link = taobao_link
         product.coupang_options = coupang_options

@@ -17,6 +17,8 @@
                 <th>ID</th>
                 <th>상품명</th>
                 <th>가격</th>
+                <th>경동</th>
+                <th>관세</th>
                 <th>쿠팡</th>
                 <th>타오바오</th>
                 <th>썸네일</th>
@@ -31,6 +33,8 @@
                     <a href="/products/{{ p.id }}" class="text-decoration-none">{{ p.name }}</a>
                 </td>
                 <td>{{ p.price }}</td>
+                <td>{{ '✅' if p.kd_paid else '❌' }}</td>
+                <td>{{ '✅' if p.customs_paid else '❌' }}</td>
                 <td><a href="{{ p.coupang_link }}" target="_blank" class="btn btn-outline-secondary btn-sm">Coupang</a></td>
                 <td><a href="{{ p.taobao_link }}" target="_blank" class="btn btn-outline-secondary btn-sm">Taobao</a></td>
                 <td><img src="{{ p.thumbnail }}" width="60"></td>
